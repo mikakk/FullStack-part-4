@@ -1,18 +1,21 @@
 # FullStack part 4
 
-## Projektin luominen
+## Create project
 
 `npm init`\
 `npm install --save-dev nodemon`\
 `npm install express --save`\
 `npm install cors --save`\
 `npm install mongoose --save`\
-`npm install dotenv --save`
+`npm install dotenv --save`\
+`npm install eslint --save-dev`\
+`npm i eslint-plugin-react@latest --save-dev`
 
-## Tietokanta
+## Database
 
 mlab: fullstack-part-4-dev
 
-## Ajaminen
+## Run
 
-`npm run watch`
+`npm run watch`\
+`npm run lint`
