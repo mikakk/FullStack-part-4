@@ -1,0 +1,22 @@
+{
+    "name": "part-4",
+    "version": "1.0.0",
+    "description": "Fullstack part-4",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "watch": "nodemon index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "nodemon": "^1.18.5"
+    },
+    "dependencies": {
+        "cors": "^2.8.4",
+        "dotenv": "^6.1.0",
+        "express": "^4.16.4",
+        "mongoose": "^5.3.7"
+    }
+}
