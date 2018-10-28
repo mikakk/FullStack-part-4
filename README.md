@@ -19,3 +19,7 @@ mlab: fullstack-part-4-dev
 
 `npm run watch`\
 `npm run lint`
+
+## Tests
+
+`npm test`
