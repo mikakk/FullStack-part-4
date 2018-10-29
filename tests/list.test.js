@@ -75,7 +75,7 @@ describe("total likes", () => {
 
 describe("favorite Blog", () => {
     test("empty list", () => {
-        const result = listHelper.totalLikes([]);
+        const result = listHelper.favoriteBlog([]);
         expect(result).toBe(0);
     });
     test("favorite Blog", () => {
@@ -90,7 +90,7 @@ describe("favorite Blog", () => {
 
 describe("most Blogs", () => {
     test("empty list", () => {
-        const result = listHelper.totalLikes([]);
+        const result = listHelper.mostBlogs([]);
         expect(result).toBe(0);
     });
     test("most Blogs", () => {
@@ -98,6 +98,20 @@ describe("most Blogs", () => {
         expect(result).toEqual({
             author: "Robert C. Martin",
             blogs: 3
+        });
+    });
+});
+
+describe("most Likes", () => {
+    test("empty list", () => {
+        const result = listHelper.mostLikes([]);
+        expect(result).toBe(0);
+    });
+    test("most Likes", () => {
+        const result = listHelper.mostLikes(blogs);
+        expect(result).toEqual({
+            author: "Edsger W. Dijkstra",
+            likes: 17
         });
     });
 });
