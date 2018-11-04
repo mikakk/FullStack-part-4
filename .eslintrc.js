@@ -4,6 +4,7 @@ module.exports = {
         es6: true,
         jest: true
     },
+    parser: "babel-eslint",
     extends: "eslint:recommended",
     parserOptions: {
         ecmaFeatures: {
@@ -21,5 +22,8 @@ module.exports = {
         "object-curly-spacing": ["error", "always"],
         "arrow-spacing": ["error", { before: true, after: true }],
         "no-console": 0
+    },
+    parserOptions: {
+        ecmaVersion: 2018
     }
 };

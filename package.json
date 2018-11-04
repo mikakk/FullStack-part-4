@@ -4,18 +4,21 @@
     "description": "Fullstack part-4",
     "main": "index.js",
     "scripts": {
-        "start": "node index.js",
-        "watch": "nodemon index.js",
+        "start": "cross-env NODE_ENV=production node index.js",
+        "watch": "cross-env NODE_ENV=development nodemon index.js",
         "lint": "eslint .",
-        "test": "jest --verbose"
+        "test": "cross-env NODE_ENV=test jest --verbose"
     },
     "author": "",
     "license": "ISC",
     "devDependencies": {
+        "babel-eslint": "^10.0.1",
+        "cross-env": "^5.2.0",
         "eslint": "^5.8.0",
         "eslint-plugin-react": "^7.11.1",
         "jest": "^23.6.0",
-        "nodemon": "^1.18.5"
+        "nodemon": "^1.18.5",
+        "supertest": "^3.3.0"
     },
     "dependencies": {
         "cors": "^2.8.4",
