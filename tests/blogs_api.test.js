@@ -106,6 +106,18 @@ test("blog with no likes will get 0", async () => {
     expect(response.body[lastIndex].likes).toBe(0);
 });
 
+test("blog with no title and url", async () => {
+    const newBlog = {
+        author: "author 6",
+        likes: "1"
+    };
+
+    await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .expect(400);
+});
+
 afterAll(() => {
     server.close();
 });
