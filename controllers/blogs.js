@@ -21,22 +21,27 @@ blogsRouter.post("/", async (request, response) => {
         const body = request.body;
 
         if (body.title === undefined) {
+            //console.log("title missing");
             return response.status(400).json({ error: "title missing" });
         }
         if (body.author === undefined) {
+            //console.log("author missing");
             return response.status(400).json({ error: "author missing" });
         }
         if (body.url === undefined) {
+            //console.log("url missing");
             return response.status(400).json({ error: "url missing" });
         }
-        if (body.likes === undefined) {
-            return response.status(400).json({ error: "likes missing" });
+        let likes = 0;
+        if (body.likes !== undefined) {
+            //console.log("set likes to:", body.likes);
+            likes = body.likes;
         }
         const blog = new Blog({
             title: body.title,
             author: body.author,
             url: body.url,
-            likes: body.likes
+            likes: likes
         });
 
         const savedBlog = await blog.save();

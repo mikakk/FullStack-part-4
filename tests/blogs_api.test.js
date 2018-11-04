@@ -44,7 +44,7 @@ test("a specific blog is within the returned blogs", async () => {
     expect(titles).toContain("title 2");
 });
 
-test("a valid blog can be added ", async () => {
+test("a valid blog can be added", async () => {
     const newBlog = {
         title: "title 3",
         author: "author 3",
@@ -66,7 +66,7 @@ test("a valid blog can be added ", async () => {
     expect(contents).toContain("title 3");
 });
 
-test("blog without title is not added ", async () => {
+test("blog without title is not added", async () => {
     const newBlog = {
         author: "author 4",
         url: "http://www.url4.com",
@@ -83,6 +83,27 @@ test("blog without title is not added ", async () => {
     const response = await api.get("/api/blogs");
 
     expect(response.body.length).toBe(initialBlogs.body.length);
+});
+
+test("blog with no likes will get 0", async () => {
+    const newBlog = {
+        title: "title 5",
+        author: "author 5",
+        url: "http://www.url5.com"
+    };
+
+    const initialBlogs = await api.get("/api/blogs");
+
+    await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .expect(200);
+
+    const response = await api.get("/api/blogs");
+    expect(response.body.length).toBe(initialBlogs.body.length + 1);
+
+    const lastIndex = response.body.length - 1;
+    expect(response.body[lastIndex].likes).toBe(0);
 });
 
 afterAll(() => {
