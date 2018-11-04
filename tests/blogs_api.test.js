@@ -44,6 +44,47 @@ test("a specific blog is within the returned blogs", async () => {
     expect(titles).toContain("title 2");
 });
 
+test("a valid blog can be added ", async () => {
+    const newBlog = {
+        title: "title 3",
+        author: "author 3",
+        url: "http://www.url3.com",
+        likes: "3"
+    };
+
+    await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .expect(200)
+        .expect("Content-Type", /application\/json/);
+
+    const response = await api.get("/api/blogs");
+
+    const contents = response.body.map(r => r.title);
+
+    expect(response.body.length).toBe(initialBlogs.length + 1);
+    expect(contents).toContain("title 3");
+});
+
+test("blog without title is not added ", async () => {
+    const newBlog = {
+        author: "author 4",
+        url: "http://www.url4.com",
+        likes: "4"
+    };
+
+    const initialBlogs = await api.get("/api/blogs");
+
+    await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .expect(400);
+
+    const response = await api.get("/api/blogs");
+
+    expect(response.body.length).toBe(initialBlogs.body.length);
+});
+
 afterAll(() => {
     server.close();
 });
