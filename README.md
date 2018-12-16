@@ -27,3 +27,7 @@ mlab: fullstack-part-4-dev
 ## Tests
 
 `npm test`
+
+## Browser
+
+http://localhost:3002/api/blogs

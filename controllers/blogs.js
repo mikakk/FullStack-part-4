@@ -22,15 +22,21 @@ blogsRouter.post("/", async (request, response) => {
 
         if (body.title === undefined) {
             //console.log("title missing");
-            return response.status(400).json({ error: "title missing" });
+            return response.status(400).json({
+                error: "title missing"
+            });
         }
         if (body.author === undefined) {
             //console.log("author missing");
-            return response.status(400).json({ error: "author missing" });
+            return response.status(400).json({
+                error: "author missing"
+            });
         }
         if (body.url === undefined) {
             //console.log("url missing");
-            return response.status(400).json({ error: "url missing" });
+            return response.status(400).json({
+                error: "url missing"
+            });
         }
         let likes = 0;
         if (body.likes !== undefined) {
@@ -50,7 +56,9 @@ blogsRouter.post("/", async (request, response) => {
         console.log("save blog", exception);
         response
             .status(500)
-            .json({ error: "save blog something went wrong..." });
+            .json({
+                error: "save blog something went wrong..."
+            });
     }
 });
 
