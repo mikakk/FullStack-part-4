@@ -149,6 +149,27 @@ describe("when there is initially some blogs saved", async () => {
         })
     })
 
+    describe("update of a blog", async () => {
+        test("PUT /api/blogs/:id succeeds with proper statuscode", async () => {
+            const blogsBefore = await blogsInDbId()
+            const lastIndex = blogsBefore.length - 1;
+            const lastId = blogsBefore[lastIndex].id;
+            const lastLikes = blogsBefore[lastIndex].likes;
+            const editLikes = lastLikes + 1
+            let editBlog = {
+                likes: editLikes
+            };
+            await api
+                .put(`/api/blogs/${lastId}`)
+                .send(editBlog)
+                .expect(200);
+
+            const blogsAfter = await blogsInDb()
+            const lastLikesUpdate = blogsAfter[lastIndex].likes;
+            expect(lastLikesUpdate).toBe(editLikes)
+        })
+    })
+
     afterAll(() => {
         server.close();
     });
