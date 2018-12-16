@@ -14,8 +14,9 @@ if (process.env.NODE_ENV !== "production") {
 
 mongoose
     .connect(
-        config.mongoUrl,
-        { useNewUrlParser: true }
+        config.mongoUrl, {
+            useNewUrlParser: true
+        }
     )
     .then(() => {
         console.log("connected to database", config.mongoUrl);
@@ -24,6 +25,7 @@ mongoose
         console.log(err);
     });
 mongoose.Promise = global.Promise;
+mongoose.set("useFindAndModify", false)
 
 app.use(cors());
 app.use(bodyParser.json());
