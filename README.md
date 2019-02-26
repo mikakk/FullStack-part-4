@@ -12,7 +12,8 @@
 `npm i eslint-plugin-react@latest --save-dev`\
 `npm install --save-dev cross-env`\
 `npm install --save-dev supertest`\
-`npm install babel-eslint --save-dev`
+`npm install babel-eslint --save-dev`\
+`npm install bcryptjs --save`
 
 ## Database
 
@@ -31,3 +32,5 @@ mlab: fullstack-part-4-dev
 ## Browser
 
 http://localhost:3002/api/blogs
+
+http://localhost:3002/api/users

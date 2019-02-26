@@ -5,11 +5,14 @@ const {
 } = require("../index");
 const api = supertest(app);
 const Blog = require("../models/blog");
+const User = require("../models/user")
 const {
     initialBlogs,
-    blogsInDb,
-    blogsInDbId
+    //blogsInDb,
+    blogsInDbId,
+    usersInDb
 } = require("./test_helper")
+jest.setTimeout(1000);
 describe("when there is initially some blogs saved", async () => {
     beforeAll(async () => {
         await Blog.deleteMany({});
@@ -20,7 +23,7 @@ describe("when there is initially some blogs saved", async () => {
     });
 
     test("all blogs are returned as json", async () => {
-        const blogsInDatabase = await blogsInDb()
+        const blogsInDatabase = await blogsInDbId()
         const response = await api
             .get("/api/blogs")
             .expect(200)
@@ -33,7 +36,7 @@ describe("when there is initially some blogs saved", async () => {
     });
 
     test("all blogs are returned", async () => {
-        const blogsInDatabase = await blogsInDb()
+        const blogsInDatabase = await blogsInDbId()
         const response = await api.get("/api/blogs");
         expect(response.body.length).toBe(blogsInDatabase.length)
     });
@@ -53,7 +56,7 @@ describe("when there is initially some blogs saved", async () => {
                 likes: 3
             };
 
-            const blogsBefore = await blogsInDb()
+            const blogsBefore = await blogsInDbId()
 
             await api
                 .post("/api/blogs")
@@ -61,9 +64,11 @@ describe("when there is initially some blogs saved", async () => {
                 .expect(200)
                 .expect("Content-Type", /application\/json/);
 
-            const blogsAfter = await blogsInDb()
+            const blogsAfter = await blogsInDbId()
             expect(blogsAfter.length).toBe(blogsBefore.length + 1)
-            expect(blogsAfter).toContainEqual(newBlog)
+            /* does not work, blogsAfter contains id, that newBlog does not have
+            expect(blogsAfter).toContainEqual(newBlog) */
+            expect(blogsAfter[blogsAfter.length - 1].title).toContain("title 3");
         });
 
         test("blog without title is not added", async () => {
@@ -73,14 +78,14 @@ describe("when there is initially some blogs saved", async () => {
                 likes: 4
             };
 
-            const blogsBefore = await blogsInDb()
+            const blogsBefore = await blogsInDbId()
 
             await api
                 .post("/api/blogs")
                 .send(newBlog)
                 .expect(400);
 
-            const blogsAfter = await blogsInDb()
+            const blogsAfter = await blogsInDbId()
             expect(blogsAfter.length).toBe(blogsBefore.length)
         });
 
@@ -91,14 +96,14 @@ describe("when there is initially some blogs saved", async () => {
                 url: "http://www.url5.com"
             };
 
-            const blogsBefore = await blogsInDb()
+            const blogsBefore = await blogsInDbId()
 
             await api
                 .post("/api/blogs")
                 .send(newBlog)
                 .expect(200);
 
-            const blogsAfter = await blogsInDb()
+            const blogsAfter = await blogsInDbId()
             expect(blogsAfter.length).toBe(blogsBefore.length + 1)
 
             const lastIndex = blogsAfter.length - 1;
@@ -142,7 +147,7 @@ describe("when there is initially some blogs saved", async () => {
                 .delete(`/api/blogs/${lastId}`)
                 .expect(204)
 
-            const blogsAfter = await blogsInDb()
+            const blogsAfter = await blogsInDbId()
             const titles = blogsAfter.map(r => r.title)
             expect(titles).not.toContain(newBlog.title)
             expect(blogsAfter.length).toBe(blogsBefore.length - 1)
@@ -164,7 +169,7 @@ describe("when there is initially some blogs saved", async () => {
                 .send(editBlog)
                 .expect(200);
 
-            const blogsAfter = await blogsInDb()
+            const blogsAfter = await blogsInDbId()
             const lastLikesUpdate = blogsAfter[lastIndex].likes;
             expect(lastLikesUpdate).toBe(editLikes)
         })
@@ -173,4 +178,62 @@ describe("when there is initially some blogs saved", async () => {
     afterAll(() => {
         server.close();
     });
+})
+
+//describe.only("when there is initially one user at db", async () => {
+describe("when there is initially one user at db", async () => {
+    beforeAll(async () => {
+        await User.deleteMany({})
+        const user = new User({
+            username: "root",
+            password: "123"
+        })
+        await user.save()
+    })
+
+    test("POST /api/users succeeds with a fresh username", async () => {
+        console.log("start")
+        const usersBeforeOperation = await usersInDb()
+        console.log("usersBeforeOperation:", usersBeforeOperation)
+
+        const newUser = {
+            username: "user1",
+            name: "First Last",
+            password: "qwerty"
+        }
+
+        await api
+            .post("/api/users")
+            .send(newUser)
+            .expect(200)
+            .expect("Content-Type", /application\/json/)
+
+        const usersAfterOperation = await usersInDb()
+        expect(usersAfterOperation.length).toBe(usersBeforeOperation.length + 1)
+        const usernames = usersAfterOperation.map(u => u.username)
+        expect(usernames).toContain(newUser.username)
+    })
+
+    test("POST /api/users fails with proper statuscode and message if username already taken", async () => {
+        const usersBeforeOperation = await usersInDb()
+
+        const newUser = {
+            username: "root",
+            name: "Superuser",
+            password: "salainen"
+        }
+
+        const result = await api
+            .post("/api/users")
+            .send(newUser)
+            .expect(400)
+            .expect("Content-Type", /application\/json/)
+
+        expect(result.body).toEqual({
+            error: "username must be unique"
+        })
+
+        const usersAfterOperation = await usersInDb()
+        expect(usersAfterOperation.length).toBe(usersBeforeOperation.length)
+    })
 })

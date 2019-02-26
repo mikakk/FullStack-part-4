@@ -1,4 +1,5 @@
 const Blog = require("../models/blog")
+const User = require("../models/user")
 
 const initialBlogs = [{
         title: "title 1",
@@ -14,37 +15,18 @@ const initialBlogs = [{
     }
 ];
 
-const format = (blog) => {
-    return {
-        title: blog.title,
-        author: blog.author,
-        url: blog.url,
-        likes: blog.likes
-    }
-}
-
-const formatId = (blog) => {
-    return {
-        title: blog.title,
-        author: blog.author,
-        url: blog.url,
-        likes: blog.likes,
-        id: blog._id
-    }
-}
-
-const blogsInDb = async () => {
-    const blogs = await Blog.find({})
-    return blogs.map(format)
-}
-
 const blogsInDbId = async () => {
     const blogs = await Blog.find({})
-    return blogs.map(formatId)
+    return blogs.map(Blog.format)
+}
+
+const usersInDb = async () => {
+    const users = await User.find({})
+    return users.map(User.format)
 }
 
 module.exports = {
     initialBlogs,
-    blogsInDb,
-    blogsInDbId
+    blogsInDbId,
+    usersInDb
 }
