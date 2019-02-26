@@ -29,8 +29,12 @@ mlab: fullstack-part-4-dev
 
 `npm test`
 
+## Ports
+
+3001: prod\
+3002: test
+
 ## Browser
 
-http://localhost:3002/api/blogs
-
-http://localhost:3002/api/users
+<http://localhost:3002/api/blogs>\
+<http://localhost:3002/api/users>

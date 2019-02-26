@@ -8,11 +8,10 @@ const Blog = require("../models/blog");
 const User = require("../models/user")
 const {
     initialBlogs,
-    //blogsInDb,
     blogsInDbId,
     usersInDb
 } = require("./test_helper")
-jest.setTimeout(1000);
+//jest.setTimeout(1000);
 describe("when there is initially some blogs saved", async () => {
     beforeAll(async () => {
         await Blog.deleteMany({});
@@ -174,10 +173,6 @@ describe("when there is initially some blogs saved", async () => {
             expect(lastLikesUpdate).toBe(editLikes)
         })
     })
-
-    afterAll(() => {
-        server.close();
-    });
 })
 
 //describe.only("when there is initially one user at db", async () => {
@@ -186,15 +181,15 @@ describe("when there is initially one user at db", async () => {
         await User.deleteMany({})
         const user = new User({
             username: "root",
-            password: "123"
+            name: "root",
+            adult: true,
+            password: "root"
         })
         await user.save()
     })
 
     test("POST /api/users succeeds with a fresh username", async () => {
-        console.log("start")
         const usersBeforeOperation = await usersInDb()
-        console.log("usersBeforeOperation:", usersBeforeOperation)
 
         const newUser = {
             username: "user1",
@@ -230,10 +225,37 @@ describe("when there is initially one user at db", async () => {
             .expect("Content-Type", /application\/json/)
 
         expect(result.body).toEqual({
-            error: "username must be unique"
+            error: "username must be unique: root"
         })
 
         const usersAfterOperation = await usersInDb()
         expect(usersAfterOperation.length).toBe(usersBeforeOperation.length)
     })
+
+    test("POST /api/users does not accept short password", async () => {
+        const usersBeforeOperation = await usersInDb()
+
+        const newUser = {
+            username: "user2",
+            name: "First Last",
+            password: "1"
+        }
+
+        const result = await api
+            .post("/api/users")
+            .send(newUser)
+            .expect(400)
+            .expect("Content-Type", /application\/json/)
+
+        expect(result.body).toEqual({
+            error: "password must be at least 3 characters long"
+        })
+
+        const usersAfterOperation = await usersInDb()
+        expect(usersAfterOperation.length).toBe(usersBeforeOperation.length)
+    })
+
+    afterAll(() => {
+        server.close();
+    });
 })
