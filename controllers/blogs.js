@@ -1,6 +1,7 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user")
+const jwt = require("jsonwebtoken")
 
 blogsRouter.get("/", async (request, response) => {
     const blogs = await Blog.find({}).populate("user", {
@@ -10,8 +11,25 @@ blogsRouter.get("/", async (request, response) => {
     response.json(blogs.map(Blog.format));
 });
 
+const getTokenFrom = (request) => {
+    const authorization = request.get("authorization")
+    if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+        return authorization.substring(7)
+    }
+    return null
+}
+
 blogsRouter.post("/", async (request, response) => {
     try {
+        const token = getTokenFrom(request)
+        const decodedToken = jwt.verify(token, process.env.SECRET)
+
+        if (!token || !decodedToken.id) {
+            return response.status(401).json({
+                error: "token missing or invalid"
+            })
+        }
+
         const body = request.body;
 
         if (body.title === undefined) {
@@ -38,7 +56,7 @@ blogsRouter.post("/", async (request, response) => {
             likes = body.likes;
         }
 
-        const user = await User.findById(body.userId);
+        const user = await User.findById(decodedToken.id);
 
         const blog = new Blog({
             title: body.title,
@@ -55,12 +73,16 @@ blogsRouter.post("/", async (request, response) => {
 
         response.json(Blog.format(savedBlog));
     } catch (exception) {
-        console.log("save blog exception:", exception);
-        response
-            .status(500)
-            .json({
+        if (exception.name === "JsonWebTokenError") {
+            response.status(401).json({
+                error: exception.message
+            })
+        } else {
+            console.log("save blog exception:", exception)
+            response.status(500).json({
                 error: "save blog something went wrong..."
-            });
+            })
+        }
     }
 });
 

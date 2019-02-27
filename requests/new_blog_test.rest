@@ -1,10 +1,11 @@
 POST http://localhost:3002/api/blogs
 content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjVjNzY0NWE1NzFmMTIwMzZmMDZmZTM3ZCIsImlhdCI6MTU1MTI1NjAzMX0.cgLxau8bCLEmV1RLr0TtOkESaGxKWftNtDTCqeYLB1I
 
 {
     "title": "title 1",
     "author": "author 1",
     "url": "http://www.url1.com",
     "likes": "1",
-    "userId": "5c756fbc0c408a3a3c252788"
+    "userId": "5c7645a571f12036f06fe37d"
 }
