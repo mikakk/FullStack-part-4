@@ -14,11 +14,21 @@ const {
 //jest.setTimeout(1000);
 describe("when there is initially some blogs saved", async () => {
     beforeAll(async () => {
+        /* init blogs */
         await Blog.deleteMany({});
-
         const blogObjects = initialBlogs.map(blog => new Blog(blog));
         const promiseArray = blogObjects.map(blog => blog.save());
         await Promise.all(promiseArray);
+
+        /* init users */
+        await User.deleteMany({})
+        const user = new User({
+            username: "root",
+            name: "root",
+            adult: true,
+            password: "root"
+        })
+        await user.save()
     });
 
     test("all blogs are returned as json", async () => {
@@ -47,12 +57,16 @@ describe("when there is initially some blogs saved", async () => {
     });
 
     describe("addition of a new blog", async () => {
+        const users = await usersInDb()
+        const firstUser = users[users.length - 1]
+
         test("a valid blog can be added", async () => {
             const newBlog = {
                 title: "title 3",
                 author: "author 3",
                 url: "http://www.url3.com",
-                likes: 3
+                likes: 3,
+                user: firstUser.id
             };
 
             const blogsBefore = await blogsInDbId()
@@ -123,6 +137,8 @@ describe("when there is initially some blogs saved", async () => {
     })
 
     describe("deletion of a blog", async () => {
+        const users = await usersInDb()
+        const firstUser = users[users.length - 1]
         let newBlog
 
         beforeAll(async () => {
@@ -130,7 +146,8 @@ describe("when there is initially some blogs saved", async () => {
                 title: "title delete",
                 author: "author delete",
                 url: "http://www.url-delete.com",
-                likes: 1
+                likes: 1,
+                user: firstUser.id
             };
             await api
                 .post("/api/blogs")
@@ -178,14 +195,14 @@ describe("when there is initially some blogs saved", async () => {
 //describe.only("when there is initially one user at db", async () => {
 describe("when there is initially one user at db", async () => {
     beforeAll(async () => {
-        await User.deleteMany({})
+        /*await User.deleteMany({})
         const user = new User({
             username: "root",
             name: "root",
             adult: true,
             password: "root"
         })
-        await user.save()
+        await user.save()*/
     })
 
     test("POST /api/users succeeds with a fresh username", async () => {
